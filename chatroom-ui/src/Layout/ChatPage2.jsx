@@ -14,15 +14,17 @@ export const ChatPage2 = () => {
   const [username] = useState(localStorage.getItem("chat-username"));
   const [receiver, setReceiver] = useState("");
   const [message, setMessage] = useState("");
-  const [media, setMedia] = useState(null);
+  const [media, setMedia] = useState("");
   const [tab, setTab] = useState("CHATROOM");
   const [publicChats, setPublicChats] = useState([]);
   const [privateChats, setPrivateChats] = useState(new Map());
-  console.log("Tab name-->", tab, "Receiver-->", receiver);
-  console.log(privateChats.get("scout"));
+
+  //const data = media.split(";")[0].split("/")[0].split(":")[1];
+  //console.log(data);
 
   const onMessageReceived = (payload) => {
     const payloadData = JSON.parse(payload.body);
+    console.log(payloadData);
     switch (payloadData.status) {
       case "JOIN":
         if (payloadData.senderName != username) {
@@ -115,42 +117,56 @@ export const ChatPage2 = () => {
     reader.readAsDataURL(file);
     reader.onload = function () {
       setMedia(reader.result);
+      const base64Data = reader.result;
+
+      setMedia(base64Data);
     };
     reader.onerror = function (error) {
       console.log("Error", error);
     };
   }
+
   //send chatroom message
   const sendMessage = () => {
-    stompClient.send(
-      "/app/message",
-      {},
-      JSON.stringify({
-        senderName: username,
-        status: "MESSAGE",
-        media: media,
-        message: message,
-      })
-    );
-    setMessage("");
+    if (message.trim().length > 0 || message.media != null) {
+      stompClient.send(
+        "/app/message",
+        {},
+        JSON.stringify({
+          senderName: username,
+          status: "MESSAGE",
+          media: media,
+          message: message,
+        })
+      );
+      setMessage("");
+      setMedia("");
+    }
   };
 
   //send Private message
   const sendPrivate = () => {
-    if (stompClient) {
-      let chatMessage = {
-        senderName: username,
-        receiverName: tab,
-        message: message,
-        media: media,
-        status: "MESSAGE",
-      };
+    if (message.trim().length > 0) {
+      if (stompClient) {
+        let chatMessage = {
+          senderName: username,
+          receiverName: tab,
+          message: message,
+          media: media,
+          status: "MESSAGE",
+        };
 
-      privateChats.get(tab).push(chatMessage);
-      setPrivateChats(new Map(privateChats));
+        privateChats.get(tab).push(chatMessage);
+        setPrivateChats(new Map(privateChats));
 
-      stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-      setMessage("");
+        stompClient.send(
+          "/app/private-message",
+          {},
+          JSON.stringify(chatMessage)
+        );
+        setMessage("");
+        setMedia("");
+      }
     }
   };
 
@@ -177,6 +193,7 @@ export const ChatPage2 = () => {
         >
           <ul className="list-group">
             <li
+              key={"o"}
               className={`list-group-item ${
                 tab === "CHATROOM" && "bg-primary text-light"
               }`}
@@ -229,10 +246,24 @@ export const ChatPage2 = () => {
                             backgroundColor: "white",
                           }}
                         >
-                          <div className="bg-warning rounded-3 px-2 me-2">
+                          <div className="bg-warning rounded-3 px-2 me-2 align-self-start">
                             {message.senderName}
                           </div>
-                          <div className="">{message.message}</div>
+                          <div>{message.message}</div>
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "image" && (
+                            <img src={message.media} alt="" width={"250px"} />
+                          )}
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "video" && (
+                            <video width="320" height="240" controls>
+                              <source src={message.media} type="video/mp4" />
+                            </video>
+                          )}
                         </div>
                       </div>
                     );
@@ -248,6 +279,20 @@ export const ChatPage2 = () => {
                           }}
                         >
                           <div className="text-white">{message.message}</div>
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "image" && (
+                            <img src={message.media} alt="" width={"250px"} />
+                          )}
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "video" && (
+                            <video width="320" height="240" controls>
+                              <source src={message.media} type="video/mp4" />
+                            </video>
+                          )}
                         </div>
                       </div>
                     );
@@ -265,12 +310,25 @@ export const ChatPage2 = () => {
                             borderBottomRightRadius: "5px",
                             borderTopLeftRadius: "5px",
                             backgroundColor: "white",
+                            maxWidth: "500px",
                           }}
                         >
-                          <div className="bg-warning rounded-3 px-2 me-2">
-                            {message.senderName}
-                          </div>
+                          <div className="bg-warning rounded-3 px-2 me-2 align-self-start"></div>
                           <div className="">{message.message}</div>
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "image" && (
+                            <img src={message.media} alt="" width={"250px"} />
+                          )}
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "video" && (
+                            <video width="320" height="240" controls>
+                              <source src={message.media} type="video/mp4" />
+                            </video>
+                          )}
                         </div>
                       </div>
                     );
@@ -283,9 +341,24 @@ export const ChatPage2 = () => {
                             borderTopRightRadius: "5px",
                             borderTopLeftRadius: "5px",
                             borderBottomLeftRadius: "5px",
+                            maxWidth: "500px",
                           }}
                         >
                           <div className="text-white">{message.message}</div>
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "image" && (
+                            <img src={message.media} alt="" width={"250px"} />
+                          )}
+                          {message.media
+                            .split(";")[0]
+                            .split("/")[0]
+                            .split(":")[1] === "video" && (
+                            <video width="320" height="240" controls>
+                              <source src={message.media} type="video/mp4" />
+                            </video>
+                          )}
                         </div>
                       </div>
                     );
@@ -299,6 +372,12 @@ export const ChatPage2 = () => {
               type="text"
               placeholder="Message"
               value={message}
+              onKeyUp={(e) => {
+                console.log(e.key);
+                if (e.key == "Enter" || e.key == 13) {
+                  tab === "CHATROOM" ? sendMessage() : sendPrivate();
+                }
+              }}
               style={{
                 flexGrow: 1,
                 borderRight: "none",

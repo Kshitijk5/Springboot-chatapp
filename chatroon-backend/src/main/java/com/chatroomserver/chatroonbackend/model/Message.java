@@ -17,5 +17,6 @@ public class Message {
     private String media;
 
     private Status status;
+    private String mediaType;
 
 }
