@@ -239,10 +239,10 @@ export const ChatPage2 = () => {
             }}
           >
             {tab === "CHATROOM"
-              ? publicChats.map((message) => {
+              ? publicChats.map((message, index) => {
                   if (message.senderName != username) {
                     return (
-                      <div className="d-flex justify-content-start" key={"?"}>
+                      <div className="d-flex justify-content-start" key={index}>
                         <div
                           className=" d-flex p-2 "
                           style={{
@@ -290,7 +290,7 @@ export const ChatPage2 = () => {
                     );
                   } else {
                     return (
-                      <div className="d-flex justify-content-end " key={"?"}>
+                      <div className="d-flex justify-content-end " key={index}>
                         <div
                           className=" bg-primary p-2"
                           style={{
@@ -319,10 +319,10 @@ export const ChatPage2 = () => {
                     );
                   }
                 })
-              : privateChats.get(tab).map((message) => {
+              : privateChats.get(tab).map((message, index) => {
                   if (message.senderName != username) {
                     return (
-                      <div className="d-flex justify-content-start" key="?">
+                      <div className="d-flex justify-content-start" key={index}>
                         <div
                           className=" d-flex p-2 flex-column"
                           style={{
@@ -358,7 +358,7 @@ export const ChatPage2 = () => {
                     );
                   } else {
                     return (
-                      <div className="d-flex justify-content-end " key={":"}>
+                      <div className="d-flex justify-content-end " key={index}>
                         <div
                           className=" bg-primary p-2"
                           style={{
