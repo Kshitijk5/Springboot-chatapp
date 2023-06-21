@@ -35,9 +35,11 @@ export const ChatPage2 = () => {
         }
         break;
       case "LEAVE":
-        if (privateChats.get(payloadData.senderName)) {
-          privateChats.delete(payloadData.senderName);
-          setPrivateChats(new Map(privateChats));
+        if (payloadData.senderName != username) {
+          if (privateChats.get(payloadData.senderName)) {
+            privateChats.delete(payloadData.senderName);
+            setPrivateChats(new Map(privateChats));
+          }
         }
         break;
       case "MESSAGE":
@@ -72,9 +74,9 @@ export const ChatPage2 = () => {
     console.log("err=>", err);
   };
   const handleLogout = () => {
+    userLeft();
     localStorage.removeItem("chat-username");
     history.push("/login");
-    userLeft();
   };
   //userJoin
   const userJoin = () => {
@@ -178,7 +180,12 @@ export const ChatPage2 = () => {
   return (
     <div
       className="d-flex justify-content-center align-items-center "
-      style={{ height: "100vh" }}
+      style={{
+        height: "100vh",
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://picsum.photos/1536/735?grayscale")`,
+        backgroundRepeat: "none",
+        backgroundSize: "cover",
+      }}
     >
       <div className="container d-flex p-0">
         {/*Member List */}
@@ -187,7 +194,7 @@ export const ChatPage2 = () => {
           style={{
             width: "200px",
             height: "551px",
-            backgroundColor: "violet",
+            backgroundColor: "transparent",
             overflowY: "scroll",
           }}
         >
@@ -236,9 +243,9 @@ export const ChatPage2 = () => {
               ? publicChats.map((message) => {
                   if (message.senderName != username) {
                     return (
-                      <div className="d-flex justify-content-start">
+                      <div className="d-flex justify-content-start" key={"?"}>
                         <div
-                          className=" d-flex p-2"
+                          className=" d-flex p-2 "
                           style={{
                             borderTopRightRadius: "5px",
                             borderBottomRightRadius: "5px",
@@ -246,30 +253,45 @@ export const ChatPage2 = () => {
                             backgroundColor: "white",
                           }}
                         >
-                          <div className="bg-warning rounded-3 px-2 me-2 align-self-start">
-                            {message.senderName}
+                          <div className=" rounded-3 px-2 me-2 align-self-start">
+                            <div className="bg-warning">
+                              {message.senderName}
+                            </div>
+                            <div>
+                              <div>{message.message}</div>
+                              <div>
+                                {message.media
+                                  .split(";")[0]
+                                  .split("/")[0]
+                                  .split(":")[1] === "image" && (
+                                  <img
+                                    src={message.media}
+                                    alt=""
+                                    width={"250px"}
+                                  />
+                                )}
+                              </div>{" "}
+                              <div>
+                                {message.media
+                                  .split(";")[0]
+                                  .split("/")[0]
+                                  .split(":")[1] === "video" && (
+                                  <video width="320" height="240" controls>
+                                    <source
+                                      src={message.media}
+                                      type="video/mp4"
+                                    />
+                                  </video>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div>{message.message}</div>
-                          {message.media
-                            .split(";")[0]
-                            .split("/")[0]
-                            .split(":")[1] === "image" && (
-                            <img src={message.media} alt="" width={"250px"} />
-                          )}
-                          {message.media
-                            .split(";")[0]
-                            .split("/")[0]
-                            .split(":")[1] === "video" && (
-                            <video width="320" height="240" controls>
-                              <source src={message.media} type="video/mp4" />
-                            </video>
-                          )}
                         </div>
                       </div>
                     );
                   } else {
                     return (
-                      <div className="d-flex justify-content-end ">
+                      <div className="d-flex justify-content-end " key={"?"}>
                         <div
                           className=" bg-primary p-2"
                           style={{
@@ -299,12 +321,11 @@ export const ChatPage2 = () => {
                   }
                 })
               : privateChats.get(tab).map((message) => {
-                  console.log("another one");
                   if (message.senderName != username) {
                     return (
-                      <div className="d-flex justify-content-start">
+                      <div className="d-flex justify-content-start" key="?">
                         <div
-                          className=" d-flex p-2"
+                          className=" d-flex p-2 flex-column"
                           style={{
                             borderTopRightRadius: "5px",
                             borderBottomRightRadius: "5px",
@@ -313,28 +334,32 @@ export const ChatPage2 = () => {
                             maxWidth: "500px",
                           }}
                         >
-                          <div className="bg-warning rounded-3 px-2 me-2 align-self-start"></div>
+                          {/* <div className="bg-warning rounded-3 px-2 me-2 align-self-start"></div> */}
                           <div className="">{message.message}</div>
-                          {message.media
-                            .split(";")[0]
-                            .split("/")[0]
-                            .split(":")[1] === "image" && (
-                            <img src={message.media} alt="" width={"250px"} />
-                          )}
-                          {message.media
-                            .split(";")[0]
-                            .split("/")[0]
-                            .split(":")[1] === "video" && (
-                            <video width="320" height="240" controls>
-                              <source src={message.media} type="video/mp4" />
-                            </video>
-                          )}
+                          <div>
+                            {message.media
+                              .split(";")[0]
+                              .split("/")[0]
+                              .split(":")[1] === "image" && (
+                              <img src={message.media} alt="" width={"250px"} />
+                            )}
+                          </div>
+                          <div>
+                            {message.media
+                              .split(";")[0]
+                              .split("/")[0]
+                              .split(":")[1] === "video" && (
+                              <video width="320" height="240" controls>
+                                <source src={message.media} type="video/mp4" />
+                              </video>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
                   } else {
                     return (
-                      <div className="d-flex justify-content-end ">
+                      <div className="d-flex justify-content-end " key={":"}>
                         <div
                           className=" bg-primary p-2"
                           style={{
