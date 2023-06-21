@@ -195,7 +195,6 @@ export const ChatPage2 = () => {
             width: "200px",
             height: "551px",
             backgroundColor: "transparent",
-            overflowY: "scroll",
           }}
         >
           <ul className="list-group">
