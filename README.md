@@ -34,9 +34,12 @@ To run the chat application locally, follow these steps:
 Here are some screenshots of the chat application:
 
 1. Login Page
-
+![](https://github.com/Kshitijk5/Springboot-chatapp/blob/master/img/login-vid.gif)
 
 2. Chat Page
+- Chatroom ![](https://github.com/Kshitijk5/Springboot-chatapp/blob/master/img/Chat-2.png)
+
+- Private Text ![](https://github.com/Kshitijk5/Springboot-chatapp/blob/master/img/Chat-1.png)
 
 
 Feel free to explore and enhance the application according to your requirements.
