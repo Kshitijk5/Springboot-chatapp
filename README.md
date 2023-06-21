@@ -20,7 +20,7 @@ The application incorporates the following technologies:
 ## Setup Instructions
 To run the chat application locally, follow these steps:
 
-1. __Clone the repository__: ``` git clone https://github.com/Kshitijk5/Springboot-websocket-chatapp.git```
+1. __Clone the repository__: ``` git clone https://github.com/Kshitijk5/Springboot-chatapp.git```
 2. __Navigate to the project directory__: ```cd chatroom-backend```
 3. __Set up the backend server__:
    - Install the necessary dependencies: ```mvn clean install```
